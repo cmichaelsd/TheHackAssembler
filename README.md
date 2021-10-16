@@ -1,7 +1,7 @@
 # The Hack Assembler
 
 ### Purpose
-The Hack Assembler exists for the purpose of translating Hack Assembly Language machine language which is then read by the Hack CPU to carry out instructions.
+The Hack Assembler exists for the purpose of translating Hack Assembly Language into machine language which is then read by the Hack CPU to carry out instructions.
 This is built to the specifications outlines in the book "The Elements of Computing Systems".
 
 ### Specification
