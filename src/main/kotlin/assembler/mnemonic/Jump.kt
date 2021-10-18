@@ -2,7 +2,7 @@ package assembler.mnemonic
 
 object Jump : Mnemonic {
     override val validMnemonics: Map<String, String> = mapOf(
-        Pair("", "000"),
+        Pair("",    "000"),
         Pair("JGT", "001"),
         Pair("JEQ", "010"),
         Pair("JGE", "011"),
