@@ -1,7 +1,7 @@
 package assembler.mnemonic
 
 object Computation : Mnemonic {
-    override val validMnemonics: Map<String, String> = mapOf(
+    override val validMnemonics: MutableMap<String, String> = mutableMapOf(
         // Address Computations.
         Pair("0",   "0101010"),
         Pair("1",   "0111111"),

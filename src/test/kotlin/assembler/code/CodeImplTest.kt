@@ -1,6 +1,7 @@
 package assembler.code
 
 import assembler.mnemonic.Computation
+import assembler.mnemonic.Destination
 import assembler.mnemonic.Jump
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -8,10 +9,8 @@ import kotlin.test.assertEquals
 internal class CodeImplTest {
     @Test
     fun dest() {
-        val permutations = mutableListOf("")
-        permutation(permutations, "ADM")
-        for (mnemonic in permutations) {
-            assertEquals(getBinary(mnemonic), CodeImpl.dest(mnemonic))
+        for ((key, value) in Destination.validMnemonics) {
+            assertEquals(value, CodeImpl.dest(key))
         }
     }
 
