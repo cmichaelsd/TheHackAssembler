@@ -35,6 +35,11 @@ class SymbolTableImpl : SymbolTable {
         Pair("THAT",   4),
     )
 
+    init {
+        // Constants
+        for (i in 0..32767) map[i.toString()] = i
+    }
+
     /**
      * Adds <symbol, address> to the table.
      *
@@ -56,7 +61,7 @@ class SymbolTableImpl : SymbolTable {
      * Returns the address associated with the symbol.
      *
      * @param  symbol the current symbol offered to fetch associated address
-     * @return Int
+     * @return Int?
      */
     override fun getAddress(symbol: String): Int? = map[symbol]
 }

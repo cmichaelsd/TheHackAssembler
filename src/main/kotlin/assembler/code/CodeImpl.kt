@@ -20,7 +20,7 @@ object CodeImpl : Code {
      * Returns the binary code of the comp mnemonic.
      *
      * @param  string               the computation string which to fetch binary equivalent for
-     * @return String
+     * @return String?
      * @throws ComputationException
      */
     @Throws(ComputationException::class)
@@ -33,7 +33,7 @@ object CodeImpl : Code {
      * Returns the binary code of the jump mnemonic.
      *
      * @param  string        the jump string which to fetch binary equivalent for
-     * @return String
+     * @return String?
      * @throws JumpException
      */
     @Throws(JumpException::class)

@@ -17,10 +17,13 @@ object Computation : Mnemonic {
         Pair("D-1", "0001110"),
         Pair("A-1", "0110010"),
         Pair("D+A", "0000010"),
+        Pair("A+D", "0000010"),
         Pair("D-A", "0010011"),
         Pair("A-D", "0000111"),
         Pair("D&A", "0000000"),
+        Pair("A&D", "0000000"),
         Pair("D|A", "0010101"),
+        Pair("A|D", "0010101"),
 
         // Memory Computations.
         Pair("M",   "1110000"),
@@ -29,9 +32,12 @@ object Computation : Mnemonic {
         Pair("M+1", "1110111"),
         Pair("M-1", "1110010"),
         Pair("D+M", "1000010"),
+        Pair("M+D", "1000010"),
         Pair("D-M", "1010011"),
         Pair("M-D", "1000111"),
         Pair("D&M", "1000000"),
-        Pair("D|M", "1010101")
+        Pair("M&D", "1000000"),
+        Pair("D|M", "1010101"),
+        Pair("M|D", "1010101")
     )
 }

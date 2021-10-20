@@ -2,13 +2,24 @@ package assembler.mnemonic
 
 object Destination : Mnemonic {
     override val validMnemonics: Map<String, String> = mapOf(
-        Pair("",    "000"),
-        Pair("M",   "001"),
-        Pair("D",   "010"),
-        Pair("DM",  "011"),
-        Pair("A",   "100"),
-        Pair("AM",  "101"),
-        Pair("AD",  "110"),
-        Pair("ADM", "111")
+        Pair("",  ""),
+        Pair("M", ""),
+        Pair("D", ""),
+        Pair("A", "")
     )
+
+    override fun contains(s: String): Boolean {
+        return s.none { !validMnemonics.containsKey(it.toString()) }
+    }
+
+    override fun toBinary(s: String): String? {
+        val preset = arrayOf(0, 0, 0)
+        if (!contains(s)) return null
+        for (c in s) {
+            if (c == 'A') preset[0] = 1
+            if (c == 'D') preset[1] = 1
+            if (c == 'M') preset[2] = 1
+        }
+        return preset.joinToString("")
+    }
 }

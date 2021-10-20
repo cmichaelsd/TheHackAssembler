@@ -6,7 +6,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 internal class SymbolTableImplTest {
-
     /**
      * User defined symbols to load into a symbol table.
      */
@@ -31,9 +30,7 @@ internal class SymbolTableImplTest {
     fun addEntry() {
         for ((symbol, address) in userSymbols) {
             symbolTable.addEntry(symbol, address)
-        }
-        for (entry in userSymbols) {
-            assertTrue(symbolTable.map.contains(entry.key))
+            assertTrue(symbolTable.map.contains(symbol))
         }
     }
 
@@ -41,18 +38,14 @@ internal class SymbolTableImplTest {
     fun contains() {
         for ((symbol, address) in userSymbols) {
             symbolTable.map[symbol] = address
-        }
-        for (entry in userSymbols) {
-            assertTrue(symbolTable.contains(entry.key))
+            assertTrue(symbolTable.contains(symbol))
         }
     }
 
     @Test
     fun getAddress() {
-        for ((key, value) in userSymbols) {
-            symbolTable.map[key] = value
-        }
         for ((symbol, address) in userSymbols) {
+            symbolTable.map[symbol] = address
             assertEquals(address, symbolTable.getAddress(symbol))
         }
     }

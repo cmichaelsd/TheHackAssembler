@@ -1,29 +1,11 @@
 package assembler.parser
 
 import org.junit.Before
+import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 internal class ParserImplTest {
-    /**
-     * Test instructions to feed into ParserImpl class.
-     */
-    private val testInstructions = mutableListOf(
-        "// This file is part of www.nand2tetris.org",
-        "// and the book \"The Elements of Computing Systems\"",
-        "// by Nisan and Schocken, MIT Press.",
-        "// File name: projects/06/add/Add.asm",
-        "",
-        "// Computes R0 = 2 + 3  (R0 refers to RAM[0])",
-        "",
-        "@2 // test comment",
-        "D=A",
-        "@3",
-        "D=D+A",
-        "@0",
-        "M=D"
-    )
-
     /**
      * The excepted significant lines to be read by ParserImpl class.
      */
@@ -43,7 +25,9 @@ internal class ParserImplTest {
 
     @Before
     fun setup() {
-        testParserImpl = ParserImpl(testInstructions)
+        val path = this.javaClass.getResource("/Add.asm")?.path ?: ""
+        val file = File(path)
+        testParserImpl = ParserImpl(file)
     }
 
     @Test

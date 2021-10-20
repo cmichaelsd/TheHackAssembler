@@ -1,8 +1,12 @@
 package assembler.parser
 
 import assembler.mnemonic.*
+import java.io.File
 
-class ParserImpl(private val assemblyInstructions: MutableList<String>) : Parser {
+class ParserImpl(file: File) : Parser {
+
+    private var assemblyInstructions: List<String> = file.useLines { it.toList() }
+
     /**
      * Total number of lines in the file to parse.
      */
@@ -11,7 +15,12 @@ class ParserImpl(private val assemblyInstructions: MutableList<String>) : Parser
     /**
      * The current line being parsed, will increase with each call to #advance().
      */
-    private var currentLine = -1
+    var currentLine = -1
+
+    /**
+     * The line number of significant lines parsed, will increase with each call to #advance().
+     */
+    var significantLine = -1
 
     /**
      * The current instruction being parsed, is set in #advance().
@@ -49,6 +58,10 @@ class ParserImpl(private val assemblyInstructions: MutableList<String>) : Parser
             if (index == commentIndex) break
             currentInstruction += character
         }
+
+        if (instructionType() != Instruction.L_INSTRUCTION) {
+            ++significantLine
+        }
     }
 
     /**
@@ -61,7 +74,7 @@ class ParserImpl(private val assemblyInstructions: MutableList<String>) : Parser
      */
     override fun instructionType(): Instruction {
         return if (currentInstruction[0] == '@') Instruction.A_INSTRUCTION
-        else if (currentInstruction.matches("\\([A-Z]+\\)".toRegex(RegexOption.IGNORE_CASE))) Instruction.L_INSTRUCTION
+        else if (currentInstruction.matches("\\(.+\\)".toRegex())) Instruction.L_INSTRUCTION
         else Instruction.C_INSTRUCTION
     }
 
@@ -89,8 +102,7 @@ class ParserImpl(private val assemblyInstructions: MutableList<String>) : Parser
     @Throws(DestinationException::class)
     override fun dest(): String {
         currentInstruction.let {
-            val destExists = it.indexOf("=")
-            val destination = if (destExists == -1) "" else it.substring(0, it.indexOf("="))
+            val destination = if (it.contains("=")) it.substring(0, it.indexOf("=")) else ""
             return if (Destination.contains(destination)) destination
             else throw DestinationException("Illegal destination token at $currentLine.")
         }
@@ -107,8 +119,8 @@ class ParserImpl(private val assemblyInstructions: MutableList<String>) : Parser
     @Throws(ComputationException::class)
     override fun comp(): String {
         currentInstruction.let {
-            val compExists = it.indexOf("=")
-            val computation = if (compExists == -1) it else it.substring(compExists + 1, it.length)
+            val jump = it.contains(";")
+            val computation = it.substring(it.indexOf("=") + 1, if (jump) it.indexOf(";") else it.length)
             return if (Computation.contains(computation)) computation
             else throw ComputationException("Illegal computation token at $currentLine.")
         }
@@ -125,10 +137,14 @@ class ParserImpl(private val assemblyInstructions: MutableList<String>) : Parser
     @Throws(JumpException::class)
     override fun jump(): String {
         currentInstruction.let {
-            val jumpExists = it.indexOf(";")
-            val jump = if (jumpExists == -1) "" else it.substring(jumpExists + 1, it.length)
+            val jump = if (it.contains(";")) it.substring(it.indexOf(";") + 1, it.length) else ""
             return if (Jump.contains(jump)) jump
             else throw JumpException("Illegal jump token at $currentLine.")
         }
+    }
+
+    fun reset() {
+        currentLine = -1
+        currentInstruction = ""
     }
 }
