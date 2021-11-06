@@ -143,7 +143,10 @@ class ParserImpl(file: File) : Parser {
         }
     }
 
-    fun reset() {
+    /**
+     * Resets properties to initial values
+     */
+    fun close() {
         currentLine = -1
         currentInstruction = ""
     }

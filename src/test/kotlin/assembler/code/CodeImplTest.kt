@@ -27,22 +27,4 @@ internal class CodeImplTest {
             assertEquals(value, CodeImpl.jump(key))
         }
     }
-
-    private fun permutation(list: MutableList<String>, string: String, prefix: String = "") {
-        for ((index, character) in string.withIndex()) {
-            val newPrefix = "$prefix$character"
-            list.add(newPrefix)
-            permutation(list, "${string.substring(0, index)}${string.substring(index + 1, string.length)}", newPrefix)
-        }
-    }
-
-    private fun getBinary(string: String): String {
-        val preset = arrayOf(0, 0, 0)
-        for (character in string) {
-            if (character == 'A') preset[0] = 1
-            if (character == 'D') preset[1] = 1
-            if (character == 'M') preset[2] = 1
-        }
-        return preset.joinToString("")
-    }
 }

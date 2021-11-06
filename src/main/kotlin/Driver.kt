@@ -24,7 +24,7 @@ object Driver {
             val binary = createBinaryForInstructionType(parserImpl, symbolTableImpl)
             if (binary.isNotBlank()) list.add(binary)
         }
-        parserImpl.reset()
+        parserImpl.close()
         return list
     }
 
@@ -41,7 +41,7 @@ object Driver {
                 symbolTableImpl.addEntry(parserImpl.symbol(), parserImpl.significantLine + 1)
             }
         }
-        parserImpl.reset()
+        parserImpl.close()
     }
 
     /**
