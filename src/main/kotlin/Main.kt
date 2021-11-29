@@ -3,7 +3,8 @@ import assembler.symbolTable.SymbolTableImpl
 import java.io.File
 
 const val FILE_ARGUMENT_INDEX = 0
-const val VALID_FILE_READ_TYPE = ".asm"
+const val VALID_FILE_READ_TYPE = "asm"
+const val VALID_FILE_WRITE_TYPE = "hack"
 
 fun main(args: Array<String>) {
     // Try adding program arguments at Run/Debug configuration.
@@ -16,7 +17,7 @@ fun main(args: Array<String>) {
     val file = File(args[FILE_ARGUMENT_INDEX])
 
     // If not valid file type, return.
-    if (!file.exists() && file.extension != VALID_FILE_READ_TYPE) return
+    if (!file.exists() || file.extension != VALID_FILE_READ_TYPE) return
 
     // Initialize ParserImpl with file.
     val parserImpl = ParserImpl(file)
@@ -31,13 +32,10 @@ fun main(args: Array<String>) {
     val list = Driver.generateBinaries(parserImpl, symbolTableImpl)
 
     // The file will be saved as a .hack file in the same directory as the parsed assembly file.
-    val resultFilePath = "${file.parentFile}/${file.nameWithoutExtension}.hack"
+    val resultFilePath = "${file.parentFile}/${file.nameWithoutExtension}.$VALID_FILE_WRITE_TYPE"
 
     // Write binaries to an output file.
     File(resultFilePath).bufferedWriter().use { writer ->
-        list.forEach { line ->
-            writer.write(line)
-            writer.newLine()
-        }
+        list.forEach { writer.appendLine(it) }
     }
 }
