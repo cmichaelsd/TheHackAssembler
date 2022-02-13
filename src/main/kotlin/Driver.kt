@@ -3,6 +3,7 @@ import assembler.parser.Instruction
 import assembler.parser.ParserImpl
 import assembler.symbolTable.SymbolTableImpl
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.jvm.Throws
 
 object Driver {
     /**
@@ -11,21 +12,28 @@ object Driver {
      * @param  parserImpl      the implementation of the Parser interface to parse assembly files
      * @param  symbolTableImpl the implementation of the SymbolTable interface to retrieve the symbols address
      * @return List<String>
+     * @throws Exception
      */
-    fun generateBinaries(parserImpl: ParserImpl, symbolTableImpl: SymbolTableImpl): List<String> {
+    @Throws(Exception::class)
+    fun generateBinaries(parserImpl: ParserImpl, symbolTableImpl: SymbolTableImpl): String {
         val registerCounter = AtomicInteger(15)
-        val list = mutableListOf<String>()
-        while (parserImpl.hasMoreLines()) {
-            parserImpl.advance()
-            val symbol = parserImpl.symbol()
-            if (parserImpl.instructionType() == Instruction.A_INSTRUCTION && !symbolTableImpl.contains(symbol)) {
-                symbolTableImpl.addEntry(symbol, registerCounter.incrementAndGet())
+        val result = StringBuilder()
+        try {
+            while (parserImpl.hasMoreLines()) {
+                parserImpl.advance()
+                val symbol = parserImpl.symbol()
+                if (parserImpl.instructionType() == Instruction.A_INSTRUCTION && !symbolTableImpl.contains(symbol)) {
+                    symbolTableImpl.addEntry(symbol, registerCounter.incrementAndGet())
+                }
+                val binary = createBinaryForInstructionType(parserImpl, symbolTableImpl)
+                if (binary.isNotBlank()) result.appendLine(binary)
             }
-            val binary = createBinaryForInstructionType(parserImpl, symbolTableImpl)
-            if (binary.isNotBlank()) list.add(binary)
+        } catch (e: Exception) {
+            throw e
+        } finally {
+            parserImpl.close()
         }
-        parserImpl.close()
-        return list
+        return result.toString()
     }
 
     /**
@@ -50,13 +58,19 @@ object Driver {
      * @param  parserImpl      the implementation of the Parser interface to parse assembly files
      * @param  symbolTableImpl the implementation of the SymbolTable interface to store assembly symbols
      * @return String
+     * @throws Exception
      */
+    @Throws(Exception::class)
     private fun createBinaryForInstructionType(parserImpl: ParserImpl, symbolTableImpl: SymbolTableImpl): String {
-        return if (parserImpl.instructionType() == Instruction.C_INSTRUCTION) {
-            getCInstructionInBinary(parserImpl.dest(),  parserImpl.comp(), parserImpl.jump())
-        } else if (parserImpl.instructionType() == Instruction.A_INSTRUCTION) {
-            getNonCInstructionInBinary(parserImpl.symbol(), symbolTableImpl)
-        } else ""
+        try {
+            return if (parserImpl.instructionType() == Instruction.C_INSTRUCTION) {
+                getCInstructionInBinary(parserImpl.dest(),  parserImpl.comp(), parserImpl.jump())
+            } else if (parserImpl.instructionType() == Instruction.A_INSTRUCTION) {
+                getNonCInstructionInBinary(parserImpl.symbol(), symbolTableImpl)
+            } else ""
+        } catch (e: Exception) {
+            throw e
+        }
     }
 
     /**
@@ -78,11 +92,17 @@ object Driver {
      * @param  comp   the computation portion of the current C_INSTRUCTION
      * @param  jump   the jump portion of the current C_INSTRUCTION
      * @return String
+     * @throws Exception
      */
+    @Throws(Exception::class)
     private fun getCInstructionInBinary(dest: String, comp: String, jump: String): String {
-        val d = CodeImpl.dest(dest) ?: return ""
-        val c = CodeImpl.comp(comp) ?: return ""
-        val j = CodeImpl.jump(jump) ?: return ""
-        return "${c}${d}${j}".padStart(13, '0').padStart(16, '1')
+        try {
+            val d = CodeImpl.dest(dest) ?: return ""
+            val c = CodeImpl.comp(comp) ?: return ""
+            val j = CodeImpl.jump(jump) ?: return ""
+            return "${c}${d}${j}".padStart(13, '0').padStart(16, '1')
+        } catch (e: Exception) {
+            throw e
+        }
     }
 }

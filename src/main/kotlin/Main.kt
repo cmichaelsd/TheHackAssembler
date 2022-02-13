@@ -19,23 +19,27 @@ fun main(args: Array<String>) {
     // If not valid file type, return.
     if (!file.exists() || file.extension != VALID_FILE_READ_TYPE) return
 
+    // The file will be saved as a .hack file in the same directory as the parsed assembly file.
+    val resultFilePath = "${file.parentFile}/${file.nameWithoutExtension}.$VALID_FILE_WRITE_TYPE"
+
     // Initialize ParserImpl with file.
     val parserImpl = ParserImpl(file)
 
     // Initialize SymbolTableImpl.
     val symbolTableImpl = SymbolTableImpl()
 
-    // First pass through for label instructions.
-    Driver.parseLabels(parserImpl, symbolTableImpl)
+    try {
+        // First pass through for label instructions.
+        Driver.parseLabels(parserImpl, symbolTableImpl)
 
-    // Second pass through for variables and generating binaries.
-    val list = Driver.generateBinaries(parserImpl, symbolTableImpl)
+        // Second pass through for variables and generating binaries.
+        val result = Driver.generateBinaries(parserImpl, symbolTableImpl)
 
-    // The file will be saved as a .hack file in the same directory as the parsed assembly file.
-    val resultFilePath = "${file.parentFile}/${file.nameWithoutExtension}.$VALID_FILE_WRITE_TYPE"
-
-    // Write binaries to an output file.
-    File(resultFilePath).bufferedWriter().use { writer ->
-        list.forEach { writer.appendLine(it) }
+        // Write binaries to an output file.
+        File(resultFilePath).bufferedWriter().use {
+            it.append(result)
+        }
+    } catch (e: Exception) {
+        throw e
     }
 }
